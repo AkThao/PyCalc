@@ -14,6 +14,8 @@ from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QRegExp
+from PyQt5.QtGui import QRegExpValidator
 
 __version__ = "0.4"
 __author__ = "Akaash Thao"
@@ -51,7 +53,12 @@ class PyCalcUI(QMainWindow):
     def _createDisplay(self):
         """Create the dislpay"""
         # Create the display widget
+        # Since eval() function is a security risk, use regex to limit keyboard input to only valid calculator buttons
+        valid_characters = QRegExp("[0-9()\-+*/]*")
+        validator = QRegExpValidator(valid_characters, self)
+
         self.display = QLineEdit()
+        self.display.setValidator(validator)
 
         # Set some display properties
         self.display.setFixedHeight(35)
