@@ -17,7 +17,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QRegExpValidator
 
-__version__ = "0.4"
+__version__ = "0.5"
 __author__ = "Akaash Thao"
 
 ERROR_MSG = "ERROR" # Display this in case of invalid maths expression
