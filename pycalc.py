@@ -15,7 +15,7 @@ from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtCore import Qt
 
-__version__ = "0.2"
+__version__ = "0.3"
 __author__ = "Akaash Thao"
 
 ERROR_MSG = "ERROR" # Display this in case of invalid maths expression
@@ -51,7 +51,6 @@ class PyCalcUI(QMainWindow):
     def _createDisplay(self):
         """Create the dislpay"""
         # Create the display widget
-        # Since eval() function is a security risk, use regex to limit keyboard input to only valid calculator buttons
         self.display = QLineEdit()
 
         # Set some display properties
@@ -85,8 +84,8 @@ class PyCalcUI(QMainWindow):
             "(": (2, 3),
             ")": (2, 4),
             "0": (3, 0),
-            "00": (3, 1),
-            ".": (3, 2),
+            ".": (3, 1),
+            "ANS": (3, 2),
             "=": (3, 3),
             "C": (3, 4),
         }
@@ -130,6 +129,8 @@ class PyCalcCtrl:
         # Also give PyCalcCtrl an instance of the model used to evaluate maths expressions input into the calculator
         self._evaluate = model
 
+        self.last_answer = self._view.getDisplayText()
+
         # Connect signals and slots
         self._connectSignals()
 
@@ -138,6 +139,8 @@ class PyCalcCtrl:
         result = self._evaluate(expression=self._view.getDisplayText())
         self._view.setDisplayText(result)
         self._view.is_answer_displayed = True
+        if result != ERROR_MSG:
+            self.last_answer = result
 
     def _buildExpression(self, sub_exp):
         """Build expressions"""
@@ -149,18 +152,22 @@ class PyCalcCtrl:
             self._view.clearDisplay()
 
         # Combine what is already in the display with what is entered on each key press
-        expression = self._view.getDisplayText() + sub_exp
+        if sub_exp == "ANS":
+            expression = self._view.getDisplayText() + self.last_answer
+        else:
+            expression = self._view.getDisplayText() + sub_exp
         # Update the display in response to user input
         self._view.setDisplayText(expression)
 
     def _connectSignals(self):
         """Connect signals and slots"""
         for btnText, btn in self._view.buttons.items():
-            if btnText not in {"=", "C"}:
+            if btnText not in {"=", "C", "ANS"}:
                 btn.clicked.connect(partial(self._buildExpression, btnText))
 
         self._view.buttons["C"].clicked.connect(self._view.clearDisplay)
         self._view.buttons["="].clicked.connect(self._calculateResult)
+        self._view.buttons["ANS"].clicked.connect(partial(self._buildExpression, "ANS"))
         self._view.display.returnPressed.connect(self._calculateResult)
 
 
