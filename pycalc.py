@@ -51,7 +51,6 @@ class PyCalcUI(QMainWindow):
     def _createDisplay(self):
         """Create the dislpay"""
         # Create the display widget
-        # Since eval() function is a security risk, use regex to limit keyboard input to only valid calculator buttons
         self.display = QLineEdit()
 
         # Set some display properties
