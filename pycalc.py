@@ -15,7 +15,7 @@ from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtCore import Qt
 
-__version__ = "0.3"
+__version__ = "0.4"
 __author__ = "Akaash Thao"
 
 ERROR_MSG = "ERROR" # Display this in case of invalid maths expression
@@ -56,7 +56,7 @@ class PyCalcUI(QMainWindow):
         # Set some display properties
         self.display.setFixedHeight(35)
         self.display.setAlignment(Qt.AlignRight)
-        self.display.setReadOnly(True)
+        #self.display.setReadOnly(True)
 
         # Add the display to the general layout
         self.generalLayout.addWidget(self.display)
