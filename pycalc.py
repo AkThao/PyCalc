@@ -15,8 +15,7 @@ from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtCore import Qt
 
-
-__version__ = "0.1"
+__version__ = "0.2"
 __author__ = "Akaash Thao"
 
 ERROR_MSG = "ERROR" # Display this in case of invalid maths expression
@@ -31,6 +30,8 @@ class PyCalcUI(QMainWindow):
     """PyCalc's View (GUI)"""
     def __init__(self):
         super().__init__()
+
+        self.is_answer_displayed = False
 
         # Set some main window properties
         self.setWindowTitle("PyCalc")
@@ -50,6 +51,7 @@ class PyCalcUI(QMainWindow):
     def _createDisplay(self):
         """Create the dislpay"""
         # Create the display widget
+        # Since eval() function is a security risk, use regex to limit keyboard input to only valid calculator buttons
         self.display = QLineEdit()
 
         # Set some display properties
@@ -111,6 +113,7 @@ class PyCalcUI(QMainWindow):
     def clearDisplay(self):
         """Clear the display"""
         self.setDisplayText("")
+        self.is_answer_displayed = False
 
 
 ####################
@@ -134,10 +137,15 @@ class PyCalcCtrl:
         """Evaluate expressions"""
         result = self._evaluate(expression=self._view.getDisplayText())
         self._view.setDisplayText(result)
+        self._view.is_answer_displayed = True
 
     def _buildExpression(self, sub_exp):
         """Build expressions"""
         if self._view.getDisplayText() == ERROR_MSG:
+            self._view.clearDisplay()
+
+        # If an answer has just been displayed, clear the screen so a new expression can be entered
+        if self._view.is_answer_displayed == True:
             self._view.clearDisplay()
 
         # Combine what is already in the display with what is entered on each key press
